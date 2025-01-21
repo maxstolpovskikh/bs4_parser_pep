@@ -124,16 +124,15 @@ def pep(session):
                         if status_dd:
                             status_abbr = status_dd.find('abbr')
                             if status_abbr:
-                                page_status = status_abbr.text
-                                status_counter[page_status] += 1
+                                page_st = status_abbr.text
+                                status_counter[page_st] += 1
                                 p_status = text[1] if len(text) > 1 else ''
-
-                                if page_status not in EXPECTED_STATUS[p_status]:
+                                if page_st not in EXPECTED_STATUS[p_status]:
                                     error = (
                                         f'Несовпадающие статусы:\n'
                                         f'PEP: {text}\n'
                                         f'Статус в таблице: {final_status}\n'
-                                        f'Статус в карточке: {page_status}'
+                                        f'Статус в карточке: {page_st}'
                                     )
                                     logging.warning(error)
 
