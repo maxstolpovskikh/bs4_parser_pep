@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 
 from configs import configure_argument_parser, configure_logging
-from constants import BASE_DIR, MAIN_DOC_URL, PEP_URL
+from constants import BASE_DIR, EXPECTED_STATUS, MAIN_DOC_URL, PEP_URL
 from outputs import control_output
 from utils import find_tag, get_response
 
@@ -101,8 +101,6 @@ def download(session):
 
 def pep(session):
     response = get_response(session, PEP_URL)
-    if response is None:
-        return
 
     soup = BeautifulSoup(response.text, features='lxml')
     tbody_tags = soup.find_all('tbody')
@@ -113,19 +111,12 @@ def pep(session):
             cells = row.find_all('td')
             abbr_tag = cells[0].find('abbr')
             if abbr_tag:
+                text = abbr_tag.text
                 a_tag = cells[1].find('a')
-
-                if not a_tag:
-                    continue
-
                 table_status = abbr_tag['title']
                 final_status = table_status.split(',')[-1].strip()
                 pep_link = urljoin(PEP_URL, a_tag['href'])
-
                 response = get_response(session, pep_link)
-                if response is None:
-                    continue
-
                 page_soup = BeautifulSoup(response.text, features='lxml')
                 for dt in page_soup.find_all('dt'):
                     if 'Status' in dt.text:
@@ -135,11 +126,12 @@ def pep(session):
                             if status_abbr:
                                 page_status = status_abbr.text
                                 status_counter[page_status] += 1
+                                p_status = text[1] if len(text) > 1 else ''
 
-                                if final_status != page_status:
+                                if page_status not in EXPECTED_STATUS[p_status]:
                                     error = (
                                         f'Несовпадающие статусы:\n'
-                                        f'PEP: {abbr_tag.text}\n'
+                                        f'PEP: {text}\n'
                                         f'Статус в таблице: {final_status}\n'
                                         f'Статус в карточке: {page_status}'
                                     )
