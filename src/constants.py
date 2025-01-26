@@ -9,12 +9,12 @@ DOWNLOADS_URL = 'download.html'
 DATETIME_FORMAT = '%Y-%m-%d_%H-%M-%S'
 
 EXPECTED_STATUS = {
-    'A': ('Active', 'Accepted'),
-    'D': ('Deferred',),
-    'F': ('Final',),
-    'P': ('Provisional',),
-    'R': ('Rejected',),
-    'S': ('Superseded',),
-    'W': ('Withdrawn',),
-    '': ('Draft', 'Active'),
+    'A': ['Active', 'Accepted'],
+    'D': ['Deferred'],
+    'F': ['Final'],
+    'P': ['Provisional'],
+    'R': ['Rejected'],
+    'S': ['Superseded'],
+    'W': ['Withdrawn'],
+    '': ['Draft', 'Active'],
 }
